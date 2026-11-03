@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="ProStock: ventas, facturación con NCF, inventario, servicios y contabilidad en un solo sistema.">
+<meta property="og:title" content="ProStock">
+<meta property="og:description" content="Tu negocio completo, en un solo sistema. Presentaciones de ProStock.">
+<meta name="theme-color" content="#0A7A57">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Presentaciones ProStock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800;125,800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: menú de 4 presentaciones; cada una es una pista horizontal de láminas a pantalla completa
+   que se desliza con el dedo. Motivo: el ticket térmico y sus códigos (NCF, ITBIS) como detalle propio. */
+:root{
+  --bg:#F1F4F2; --surface:#FFFFFF; --ink:#0F1F1B; --muted:#56665F; --line:#D6DFDA;
+  --accent:#0A7A57; --accent-soft:#DDEFE7; --amber:#B9770E; --amber-soft:#F8EBD3; --soon:#6B7280; --soon-soft:#E8EAEE;
+  --on-accent:#FFFFFF;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1513; --surface:#14201C; --ink:#E6EEEA; --muted:#97A8A1; --line:#26342F;
+  --accent:#3FCB98; --accent-soft:#163A2D; --amber:#F0B656; --amber-soft:#3A2D15; --soon:#A3ABB8; --soon-soft:#232A33;
+  --on-accent:#06130E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1513; --surface:#14201C; --ink:#E6EEEA; --muted:#97A8A1; --line:#26342F;
+  --accent:#3FCB98; --accent-soft:#163A2D; --amber:#F0B656; --amber-soft:#3A2D15; --soon:#A3ABB8; --soon-soft:#232A33;
+  --on-accent:#06130E; color-scheme:dark}
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+h1,h2,h3{font-family:var(--f-display);font-stretch:112%;font-weight:800;line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.mono{font-family:var(--f-mono)}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- Menú ---------- */
+#hub{min-height:100%;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 40px}
+.hub-in{max-width:760px;margin:0 auto;display:grid;gap:28px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:1.05rem}
+.brand b{font-family:var(--f-display);font-stretch:112%;font-size:1.15rem}
+.brand span{color:var(--muted);font-size:.85rem}
+.hub-title{font-size:clamp(2.1rem,9vw,3.6rem);font-stretch:125%}
+.hub-title em{font-style:normal;color:var(--accent)}
+.hub-lead{color:var(--muted);max-width:56ch;font-size:1.05rem}
+.decks{display:grid;gap:12px}
+@media(min-width:640px){.decks{grid-template-columns:1fr 1fr}}
+.deck-card{all:unset;box-sizing:border-box;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:8px;grid-template-columns:auto 1fr;align-items:start;transition:border-color .15s,transform .15s}
+.deck-card:hover{border-color:var(--accent)}
+.deck-card:active{transform:scale(.99)}
+.deck-card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.deck-card .n{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);font-weight:600;padding-top:3px}
+.deck-card h2{font-size:1.3rem}
+.deck-card p{color:var(--muted);font-size:.92rem;grid-column:2}
+.deck-card .meta{grid-column:2;font-family:var(--f-mono);font-size:.72rem;color:var(--muted);letter-spacing:.04em}
+.hub-foot{font-size:.85rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:16px;display:flex;flex-wrap:wrap;gap:6px 18px}
+
+/* ---------- Visor de presentación ---------- */
+#deck{position:fixed;inset:0;background:var(--bg);display:grid;grid-template-rows:auto 1fr auto;z-index:5;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bar{display:flex;align-items:center;gap:10px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));padding-block:10px}
+.bar .t{flex:1;min-width:0;font-family:var(--f-display);font-stretch:112%;font-weight:800;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iconbtn{all:unset;cursor:pointer;width:40px;height:40px;border-radius:10px;display:grid;place-items:center;border:1px solid var(--line);background:var(--surface);flex:none}
+.iconbtn:focus-visible{outline:3px solid var(--accent)}
+.iconbtn svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.iconbtn[disabled]{opacity:.35;cursor:default}
+.progress{height:3px;background:var(--line);position:relative}
+.progress i{position:absolute;inset:0 auto 0 0;background:var(--accent);width:0;transition:width .25s}
+.track{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;min-height:0}
+.track::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto;min-width:0;
+  padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));padding-block:22px 28px}
+.s{max-width:700px;margin:0 auto;display:grid;gap:18px;align-content:start;min-height:100%}
+.s.center{align-content:center}
+.foot{display:flex;align-items:center;gap:10px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));padding-block:10px;border-top:1px solid var(--line)}
+.foot .count{flex:1;text-align:center;font-family:var(--f-mono);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.swipe-hint{font-size:.75rem;color:var(--muted);text-align:center}
+
+/* ---------- Piezas de lámina ---------- */
+.h1{font-size:clamp(2rem,8.5vw,3.3rem);font-stretch:125%}
+.h2{font-size:clamp(1.55rem,6.4vw,2.3rem)}
+.lead{font-size:1.06rem;color:var(--muted);max-width:60ch}
+.hl{color:var(--accent)}
+ul.l{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+ul.l li{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start}
+ul.l li::before{content:"";width:8px;height:8px;margin-top:.55em;border-radius:2px;background:var(--accent);justify-self:center}
+ul.l b{font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--f-mono);font-size:.78rem;padding:5px 10px;border-radius:999px;background:var(--accent-soft);color:var(--ink);border:1px solid transparent}
+.chip.o{background:transparent;border-color:var(--line)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;font-weight:600;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.ok{background:var(--accent-soft);color:var(--accent)}
+.pill.int{background:var(--amber-soft);color:var(--amber)}
+.pill.soon{background:var(--soon-soft);color:var(--soon)}
+.grid2{display:grid;gap:10px}
+@media(min-width:560px){.grid2{grid-template-columns:1fr 1fr}}
+.grid3{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+@media(min-width:600px){.grid3{grid-template-columns:repeat(3,1fr)}}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:6px;align-content:start;min-width:0}
+.box h3{font-size:1.02rem}
+.box p{font-size:.9rem;color:var(--muted)}
+.box .k{font-family:var(--f-mono);font-size:.72rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.big{font-family:var(--f-display);font-stretch:125%;font-weight:800;font-size:2rem;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.dato{font-family:var(--f-mono);font-size:.82rem;border-left:3px solid var(--amber);background:var(--amber-soft);padding:10px 12px;border-radius:0 8px 8px 0}
+.note{font-size:.85rem;color:var(--muted)}
+.modhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;justify-content:space-between}
+ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:0;counter-reset:st}
+ol.steps li{counter-increment:st;display:grid;grid-template-columns:34px 1fr;gap:12px;position:relative;padding-bottom:14px}
+ol.steps li::before{content:counter(st);width:30px;height:30px;border-radius:50%;background:var(--surface);border:2px solid var(--accent);color:var(--accent);display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;font-size:.82rem;z-index:1}
+ol.steps li::after{content:"";position:absolute;left:14px;top:30px;bottom:0;width:2px;background:var(--line)}
+ol.steps li:last-child::after{display:none}
+ol.steps b{display:block;font-weight:700}
+ol.steps span{color:var(--muted);font-size:.9rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:420px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+td.y{color:var(--accent);font-weight:700}
+td.n{color:var(--muted)}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:10px;align-content:start}
+.plan.feat{border:2px solid var(--accent)}
+.plan h3{font-size:1.25rem}
+.plan .who{font-size:.88rem;color:var(--muted)}
+.plan ul.l{gap:7px;font-size:.9rem}
+
+/* Ticket térmico */
+.ticket{background:var(--surface);color:var(--ink);font-family:var(--f-mono);font-size:.78rem;padding:18px 18px 22px;max-width:300px;width:100%;
+  border-radius:4px;position:relative;box-shadow:0 10px 30px -18px rgba(0,0,0,.45);justify-self:start;
+  -webkit-mask:radial-gradient(circle 6px at 50% 100%,transparent 98%,#000) 0 0/14px 100% repeat-x;
+          mask:radial-gradient(circle 6px at 50% 100%,transparent 98%,#000) 0 0/14px 100% repeat-x}
+.ticket .r{display:flex;justify-content:space-between;gap:10px}
+.ticket .c{text-align:center}
+.ticket hr{border:0;border-top:1px dashed var(--line);margin:8px 0}
+.ticket .tot{font-weight:600;font-size:.95rem}
+.ticket .qr{width:46px;height:46px;margin:8px auto 0;background:
+  conic-gradient(var(--ink) 25%,transparent 0 50%,var(--ink) 0 75%,transparent 0) 0 0/11.5px 11.5px;border:3px solid var(--ink)}
+.cover-row{display:grid;gap:22px;align-items:center}
+@media(min-width:620px){.cover-row{grid-template-columns:1.3fr 1fr}}
+
+/* Diagrama núcleo + módulos */
+.hubdia{display:grid;gap:10px}
+.core{background:var(--accent);color:var(--on-accent);border-radius:12px;padding:14px;text-align:center}
+.core b{font-family:var(--f-display);font-stretch:112%;font-size:1.15rem;display:block}
+.core span{font-size:.85rem;opacity:.9}
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.mod{border:1px dashed var(--accent);border-radius:10px;padding:9px 10px;font-size:.86rem;font-weight:600;background:var(--surface)}
+.mod.off{border-color:var(--line);color:var(--muted);font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:.8rem;color:var(--muted)}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+</head>
+<body>
+<section id="hub">
+  <div class="hub-in">
+    <div class="brand"><div class="logo" aria-hidden="true">P</div><div><b>ProStock</b><br><span>un producto de ConectorIA</span></div></div>
+    <div style="display:grid;gap:12px">
+      <h1 class="hub-title">Tu negocio completo, <em>en un solo sistema.</em></h1>
+      <p class="hub-lead">Ventas, facturación con NCF, inventario, servicios, contabilidad y reportes DGII. Elige una presentación y desliza con el dedo para avanzar.</p>
+    </div>
+    <div class="decks" id="deckList"></div>
+    <div class="hub-foot"><span>Hecho en República Dominicana</span><span>Funciona en celular, tableta y PC</span><span>Actualizado: noviembre 2026</span></div>
+  </div>
+</section>
+
+<section id="deck" hidden aria-live="polite">
+  <div>
+    <div class="bar">
+      <button class="iconbtn" id="btnHome" aria-label="Volver al menú"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      <div class="t" id="deckTitle"></div>
+    </div>
+    <div class="progress"><i id="prog"></i></div>
+  </div>
+  <div class="track" id="track" tabindex="0" aria-roledescription="carrusel"></div>
+  <div class="foot">
+    <button class="iconbtn" id="btnPrev" aria-label="Lámina anterior"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="count"><span id="count">1 / 1</span><div class="swipe-hint">Desliza ← →</div></div>
+    <button class="iconbtn" id="btnNext" aria-label="Lámina siguiente"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+</section>
+
+<script>
+/* ---------- helpers ---------- */
+const L = a => `<ul class="l">${a.map(x=>`<li><span>${x}</span></li>`).join("")}</ul>`;
+const chips = (a,o) => `<div class="chips">${a.map(x=>`<span class="chip${o?" o":""}">${x}</span>`).join("")}</div>`;
+const ST = {ok:["ok","Disponible"],int:["int","En integración"],soon:["soon","Próximamente"]};
+const pill = s => `<span class="pill ${ST[s][0]}">${ST[s][1]}</span>`;
+const steps = a => `<ol class="steps">${a.map(([b,t])=>`<li><div><b>${b}</b><span>${t}</span></div></li>`).join("")}</ol>`;
+const box = (k,h,p) => `<div class="box">${k?`<div class="k">${k}</div>`:""}<h3>${h}</h3>${p?`<p>${p}</p>`:""}</div>`;
+const head = (eb,h,lead) => `<div style="display:grid;gap:10px"><div class="eyebrow">${eb}</div><h2 class="h2">${h}</h2>${lead?`<p class="lead">${lead}</p>`:""}</div>`;
+const mod = (group,name,st,lead,items,dato) => `
+  <div style="display:grid;gap:10px">
+    <div class="modhead"><div class="eyebrow">${group}</div>${pill(st)}</div>
+    <h2 class="h2">${name}</h2>
+    <p class="lead">${lead}</p>
+  </div>
+  ${L(items)}
+  ${dato?`<div class="dato">${dato}</div>`:""}`;
+const cover = (eb,h,lead,extra="") => `<div class="s center"><div class="eyebrow">${eb}</div><h1 class="h1">${h}</h1><p class="lead">${lead}</p>${extra}</div>`;
+
+const ticket = `
+<div class="ticket" aria-label="Ejemplo de factura impresa">
+  <div class="c"><b>MI NEGOCIO SRL</b><br>RNC 1-31-00000-0</div><hr>
+  <div class="r"><span>NCF</span><span>B0100000123</span></div>
+  <div class="r"><span>Válido hasta</span><span>31/12/2027</span></div><hr>
+  <div class="r"><span>2 × Artículo A</span><span>1,200.00</span></div>
+  <div class="r"><span>1 × Servicio B</span><span>2,500.00</span></div><hr>
+  <div class="r"><span>Subtotal</span><span>3,135.59</span></div>
+  <div class="r"><span>ITBIS 18%</span><span>564.41</span></div>
+  <div class="r tot"><span>TOTAL RD$</span><span>3,700.00</span></div>
+  <div class="r"><span>Tarjeta</span><span>2,000.00</span></div>
+  <div class="r"><span>Efectivo</span><span>1,700.00</span></div>
+  <div class="qr" aria-hidden="true"></div>
+</div>`;
+
+/* ---------- Presentaciones ---------- */
+const DECKS = [
+{ id:"general", title:"Conoce ProStock", desc:"Qué es, qué problemas resuelve y por qué es distinto.", mins:"8 min",
+  slides:[
+  `<div class="s center"><div class="cover-row"><div style="display:grid;gap:14px">
+     <div class="eyebrow">Presentación general</div>
+     <h1 class="h1">Vende, factura y controla <span class="hl">todo tu negocio.</span></h1>
+     <p class="lead">ProStock es un sistema de gestión empresarial hecho para República Dominicana: punto de venta, comprobantes fiscales, inventario, servicios, cuentas y contabilidad en un solo lugar.</p>
+   </div>${ticket}</div></div>`,
+
+  `<div class="s">${head("El problema","Muchos negocios trabajan con piezas sueltas","Cada pieza hace una parte y ninguna habla con la otra. El dueño termina cuadrando a mano.")}
+   <div class="grid2">
+    ${box("Ventas","Un POS que solo vende","No sabe lo que se debe, lo que hay en almacén ni lo que pasó en contabilidad.")}
+    ${box("Inventario","Existencias en Excel","Se descuadra con cada venta, compra o daño. Nadie sabe el stock real.")}
+    ${box("DGII","606 y 607 armados a mano","Cada mes el contador reconstruye compras y ventas desde papeles.")}
+    ${box("Cobros","Abonos en una libreta","Anticipos, saldos y clientes que deben se pierden de vista.")}
+   </div>
+   <p class="note">Y cuando se va la luz o el internet, se para la caja.</p></div>`,
+
+  `<div class="s">${head("La solución","Un sistema modular: activas solo lo que usas","El núcleo maneja empresa, usuarios y comprobantes. Encima se encienden los módulos que tu negocio necesita, y se agregan más cuando crece.")}
+   <div class="hubdia">
+     <div class="core"><b>Núcleo ProStock</b><span>Empresa · usuarios y permisos · NCF e ITBIS · clientes</span></div>
+     <div class="mods">
+       ${["Punto de venta","Facturas","Cotizaciones","Cuentas por cobrar","Órdenes de servicio","Agenda de citas","Inventario","Compras","Cuentas por pagar","Sucursales","Gastos","Contabilidad","Reportes DGII","Empleados y nómina","Asistente IA","WhatsApp","Portal del cliente"].map(m=>`<div class="mod">${m}</div>`).join("")}
+       <div class="mod off">Facturación electrónica e-CF</div>
+     </div>
+     <div class="legend"><span>Borde verde: disponible hoy</span><span>Borde gris: en integración</span></div>
+   </div></div>`,
+
+  `<div class="s">${head("Alcance","Todo el ciclo del negocio, organizado por tareas","El menú está agrupado por lo que la persona quiere hacer, no por cómo está construido el sistema.")}
+   <div class="grid2">
+    ${box("Ventas","Vender y cobrar","Punto de venta, facturas, cotizaciones, clientes y cuentas por cobrar.")}
+    ${box("Servicios","Trabajos por encargo","Órdenes de servicio con etapas, anticipos, agenda y entregas.")}
+    ${box("Compras e inventario","Mercancía y suplidores","Artículos, compras, recepciones, cuentas por pagar y almacenes.")}
+    ${box("Finanzas","Números claros","Gastos, contabilidad completa y reportes, incluidos 606, 607 y 608.")}
+    ${box("Equipo","Personas y accesos","Empleados, asistencia, comisiones, nómina, usuarios y permisos.")}
+    ${box("Sistema","Inteligencia y ajustes","Asistente IA, centro de módulos y asistente de puesta en marcha.")}
+   </div></div>`,
+
+  `<div class="s">${head("Hecho para RD","Cumplimiento fiscal dominicano desde el primer día","Lo que en otros sistemas es un añadido, aquí es parte del núcleo.")}
+   ${L([
+    "<b>Comprobantes NCF</b> con secuencias por tipo y fecha de vencimiento: consumidor final, crédito fiscal, gubernamental, régimen especial, notas de crédito.",
+    "<b>ITBIS 18%</b> con precios que lo incluyen o no, y redondeo exacto al centavo.",
+    "<b>Consulta de RNC y cédula</b> contra la DGII al crear el cliente.",
+    "<b>Reportes 606, 607 y 608</b> generados del sistema, listos para enviar en el formato TXT de la DGII.",
+    "<b>Factura con código QR</b>, impresa en ticket de 80 mm o en hoja carta.",
+    "<b>Facturación electrónica e-CF</b> a través de un proveedor certificado por la DGII, en integración para el plazo de noviembre 2026."
+   ])}
+   ${chips(["B01 Crédito fiscal","B02 Consumo","B04 Nota de crédito","B14 Rég. especial","B15 Gubernamental"],true)}</div>`,
+
+  `<div class="s center">${head("Sin internet no se para","La caja sigue vendiendo aunque se vaya la luz o el internet","El punto de venta guarda las ventas en el equipo y las sincroniza solas cuando vuelve la conexión, con su fecha y hora reales.")}
+   <div class="grid3">
+    <div class="box"><div class="big">0</div><p>ventas perdidas por un apagón o una caída del internet</p></div>
+    <div class="box"><div class="big">Auto</div><p>sincronización al volver la conexión, sin pasos manuales</p></div>
+    <div class="box"><div class="big">1</div><p>misma app en PC, tableta o celular, sin instalar programas</p></div>
+   </div></div>`,
+
+  `<div class="s">${head("Seguridad","Cada persona ve y hace solo lo que le toca","")}
+   ${L([
+    "<b>Roles listos</b> (administrador, gestor, cajero, contador, producción) y <b>permisos por usuario</b> para ajustar fino.",
+    "<b>Verificación en dos pasos</b> con app autenticadora y bloqueo tras intentos fallidos.",
+    "<b>Política de contraseñas</b> y cambio obligatorio de la clave temporal al primer ingreso.",
+    "<b>Bitácora de auditoría</b>: quién hizo qué y cuándo.",
+    "<b>Datos sensibles protegidos</b>: los salarios se ocultan a quien no tiene permiso y las credenciales de integraciones se guardan cifradas.",
+    "<b>Respaldos automáticos</b> diarios de la base de datos."
+   ])}</div>`,
+
+  `<div class="s">${head("Inteligencia","Pregúntale a tu negocio","El asistente responde en español usando tus propios datos, y un vigilante revisa lo raro.")}
+   <div class="grid2">
+    ${box("Asistente IA","«¿Cuánto vendí este mes contra el pasado?»","Respuestas con tus ventas, saldos pendientes y mejores clientes, sin armar reportes.")}
+    ${box("Anomalías","Alertas de lo inusual","Descuentos fuera de lo normal y picos o caídas de ingresos que merecen una mirada.")}
+   </div>
+   <div class="dato">Ejemplo: «Descuento de 35% en la factura 0412 del martes» aparece como alerta alta.</div></div>`,
+
+  `<div class="s">${head("Cerca de tu cliente","Tus clientes se enteran sin que tengas que llamar","")}
+   <div class="grid2">
+    ${box("WhatsApp","Avisos automáticos","Confirmación de cita, recordatorio, trabajo listo, pago recibido y saldo pendiente, con plantillas aprobadas por Meta.")}
+    ${box("Portal del cliente","Su cuenta en línea","El cliente entra y ve sus facturas, órdenes y estado de cuenta.")}
+    ${box("Correo","Facturas por email","Envía la factura o el estado de cuenta en PDF con un toque.")}
+    ${box("Tu página web","Reservas que llegan solas","Las solicitudes de tu web entran a una bandeja y se convierten en órdenes con un clic.")}
+   </div></div>`,
+
+  `<div class="s">${head("Comparación","Lo que cambia frente a lo de siempre","")}
+   <div class="tbl"><table>
+    <thead><tr><th></th><th>Excel / libreta</th><th>POS común</th><th>ProStock</th></tr></thead>
+    <tbody>
+     <tr><td>NCF e ITBIS correctos</td><td class="n">Manual</td><td>Sí</td><td class="y">Sí</td></tr>
+     <tr><td>606 / 607 / 608</td><td class="n">A mano</td><td class="n">No</td><td class="y">Automático</td></tr>
+     <tr><td>Inventario al día</td><td class="n">No</td><td>Básico</td><td class="y">Con compras y almacenes</td></tr>
+     <tr><td>Servicios y anticipos</td><td class="n">No</td><td class="n">No</td><td class="y">Sí, con agenda</td></tr>
+     <tr><td>Contabilidad</td><td class="n">Aparte</td><td class="n">Aparte</td><td class="y">Integrada</td></tr>
+     <tr><td>Vende sin internet</td><td>—</td><td class="n">Rara vez</td><td class="y">Sí</td></tr>
+     <tr><td>WhatsApp y portal</td><td class="n">No</td><td class="n">No</td><td class="y">Sí</td></tr>
+    </tbody></table></div></div>`,
+
+  cover("Siguiente paso","Veámoslo funcionando con <span class=\"hl\">tus datos.</span>","Hacemos una demostración en vivo con productos y clientes parecidos a los tuyos, y preparamos una propuesta a la medida de tu negocio.",
+   steps([["Demostración","30 a 45 minutos, en tu local o por videollamada."],["Levantamiento","Qué vendes, cómo facturas y quién usa el sistema."],["Propuesta","Plan, módulos y fecha de arranque."]]))
+  ]},
+
+{ id:"modulos", title:"Módulos de ProStock", desc:"Cada módulo en detalle: qué hace y hasta dónde llega.", mins:"15 min",
+  slides:[
+  cover("Módulos","Una ficha por <span class=\"hl\">módulo.</span>","Qué hace cada parte del sistema, con su estado real: disponible hoy, en integración o próximamente.",
+   `<div class="legend">${pill("ok")} ${pill("int")} ${pill("soon")}</div>`),
+
+  `<div class="s">${mod("Inicio","Panel principal","ok","Lo importante del día apenas entras.",[
+    "Ventas, cobros y cuentas pendientes con comparación contra el período anterior.",
+    "Productos y clientes que más venden, antigüedad de lo que te deben.",
+    "Cada usuario organiza sus bloques arrastrando, y solo ve atajos a lo que tiene permiso.",
+    "Buscador global con Ctrl+K para saltar a cualquier pantalla."
+   ])}</div>`,
+
+  `<div class="s">${mod("Ventas","Punto de venta","ok","La caja: rápida, clara y lista para trabajar sin internet.",[
+    "Cobro completo o en abonos, con efectivo, tarjeta, transferencia o cheque, y pagos mixtos.",
+    "Facturas abiertas: retoma una venta guardada o abonada y termina de cobrarla.",
+    "Cliente rápido con nombre y teléfono, sin pedir RNC.",
+    "Vendedor por venta para calcular comisiones.",
+    "Descuento máximo configurable: el sistema bloquea lo que pase del límite.",
+    "Impresión en ticket térmico de 80 mm o en carta desde el navegador, sin instalar drivers."
+   ],"Al completar el cobro: asigna el NCF, rebaja el inventario y registra el asiento contable.")}</div>`,
+
+  `<div class="s">${mod("Ventas","Facturas y comprobantes","ok","Todo lo emitido, con su historia completa.",[
+    "Historial de facturas con búsqueda por cliente, número o NCF.",
+    "Detalle con pagos recibidos, saldo y código QR.",
+    "Notas de crédito sobre una factura, con su comprobante y el descuento prorrateado.",
+    "Envío de la factura por correo en PDF.",
+    "Secuencias NCF por tipo, con alerta antes de que se agoten o venzan."
+   ])}</div>`,
+
+  `<div class="s">${mod("Ventas","Cotizaciones","ok","Del presupuesto a la venta sin volver a escribir nada.",[
+    "Estados claros: borrador, enviada, aceptada y convertida.",
+    "Convierte en venta del punto de venta o en orden de servicio con un toque.",
+    "Crea el cliente desde la misma cotización si es nuevo."
+   ],"Borrador → Enviada → Aceptada → Venta u orden de servicio")}</div>`,
+
+  `<div class="s">${mod("Ventas","Clientes y cuentas por cobrar","ok","Quién te compra, cuánto te debe y desde cuándo.",[
+    "Ficha completa del cliente: datos, compras, órdenes, pagos y saldo en una sola vista.",
+    "Consulta de RNC o cédula en la DGII al registrarlo.",
+    "Cuentas por cobrar por antigüedad: al día, 30, 60 y 90+ días.",
+    "Recordatorios de cobro y estado de cuenta en PDF.",
+    "Importación de clientes desde un archivo CSV."
+   ])}</div>`,
+
+  `<div class="s">${mod("Servicios","Órdenes de servicio","ok","Para negocios que venden trabajo: estudios, talleres, agencias, técnicos.",[
+    "Tablero por etapas (Kanban) para ver cada trabajo y moverlo con el dedo.",
+    "Anticipos y saldo como facturas reales con NCF.",
+    "Facturación parcial, materiales usados y gastos ligados a la orden.",
+    "Equipo asignado por orden: quién hace la sesión, quién edita, quién entrega.",
+    "Bandeja de solicitudes que llegan desde tu página web."
+   ])}</div>`,
+
+  `<div class="s">${mod("Servicios","Agenda de citas","ok","Disponibilidad real por persona, sin cruzar compromisos.",[
+    "Calendario por mes y por semana con bloques por hora.",
+    "Citas con hora de inicio y duración, de 30 minutos a día completo.",
+    "Aviso si la persona ya tiene una cita o el día está bloqueado.",
+    "Bloqueo de fechas para todo el negocio o para una persona.",
+    "Tu web solo ofrece las horas libres, y la reserva aparta su hora."
+   ])}</div>`,
+
+  `<div class="s">${mod("Servicios","Mis trabajos","ok","Una pantalla simple para técnicos, fotógrafos o editores.",[
+    "Cada persona ve solo lo que tiene asignado y su propia agenda.",
+    "Marca avances y cambia la etapa de la orden.",
+    "No ve precios, salarios ni pantallas administrativas."
+   ])}</div>`,
+
+  `<div class="s">${mod("Compras e inventario","Inventario","ok","Existencias reales, movimiento por movimiento.",[
+    "Artículos con categorías, fotos, costo, precio y tipo de bien o servicio para la DGII.",
+    "Ajustes de stock con motivo y registro de cada movimiento.",
+    "Alerta de existencia baja y botón «Pedir» que arma la compra.",
+    "Importación masiva desde CSV.",
+    "Reportes de margen y rotación por artículo."
+   ])}</div>`,
+
+  `<div class="s">${mod("Compras e inventario","Compras, suplidores y cuentas por pagar","ok","Lo que entra y lo que debes, cuadrado con lo recibido.",[
+    "Órdenes de compra con recepción parcial: la deuda nace por lo que realmente llegó.",
+    "Pagos a suplidores y saldo pendiente por compra.",
+    "Ficha del suplidor con su RNC, historial y deuda.",
+    "NCF del suplidor en cada compra, que alimenta el 606.",
+    "Cada recepción y pago genera su asiento contable."
+   ])}</div>`,
+
+  `<div class="s">${mod("Compras e inventario","Sucursales y almacenes","ok","Para el negocio con tienda y depósito, o con más de un local.",[
+    "Varios almacenes, cada uno con sus existencias.",
+    "Transferencias de mercancía entre almacenes con registro.",
+    "Ventas e inventario por ubicación."
+   ])}</div>`,
+
+  `<div class="s">${mod("Finanzas","Gastos","ok","Caja chica y gastos sin orden de compra, sin perder el comprobante.",[
+    "Nueve categorías de gasto y filtros por fecha.",
+    "NCF y RNC del suplidor para que el gasto entre en el 606.",
+    "Gasto ligado a una orden de servicio para saber cuánto dejó cada trabajo."
+   ])}</div>`,
+
+  `<div class="s">${mod("Finanzas","Contabilidad","ok","Contabilidad completa, alimentada por lo que pasa en el negocio.",[
+    "Plan de cuentas, libro diario y libro mayor.",
+    "Balanza de comprobación, estado de resultados y balance general.",
+    "Asientos automáticos desde ventas, compras, pagos y gastos.",
+    "Reversión de asientos y exportación a Excel.",
+    "Rol de contador con acceso a finanzas, sin tocar la caja ni el inventario."
+   ])}</div>`,
+
+  `<div class="s">${mod("Finanzas","Reportes y DGII","ok","Los números del negocio y lo que pide Impuestos Internos.",[
+    "Ventas por período, margen y rotación de inventario.",
+    "606 (compras y gastos), 607 (ventas) y 608 (anulaciones).",
+    "Vista previa en pantalla y archivo TXT en el formato de envío de la DGII.",
+    "Exportación a Excel para el contador."
+   ],"607 · período 2026-10 · TXT separado por barras, listo para la Oficina Virtual")}</div>`,
+
+  `<div class="s">${mod("Equipo","Empleados y nómina","ok","El personal, su asistencia y lo que se le paga.",[
+    "Ficha del empleado: puesto, departamento, tipo de salario.",
+    "Registro de asistencia.",
+    "Comisiones calculadas desde las ventas de cada vendedor.",
+    "Nómina por período; el salario solo lo ve quien tiene permiso."
+   ])}</div>`,
+
+  `<div class="s">${mod("Equipo","Usuarios y permisos","ok","Control fino de quién entra y qué puede hacer.",[
+    "Roles predefinidos y permisos por usuario que suman o quitan accesos.",
+    "Verificación en dos pasos y bloqueo por intentos fallidos.",
+    "Contraseña temporal con cambio obligatorio al entrar.",
+    "Bitácora de acciones."
+   ])}</div>`,
+
+  `<div class="s">${mod("Sistema","Asistente IA","ok","Inteligencia artificial aplicada a tus datos.",[
+    "Preguntas en lenguaje natural sobre ventas, saldos y clientes.",
+    "Detección de anomalías: descuentos inusuales y cambios bruscos de ingresos.",
+    "Sugerencias de preguntas para empezar."
+   ])}</div>`,
+
+  `<div class="s">${mod("Integraciones","Avisos por WhatsApp","ok","Mensajes automáticos desde el número oficial de tu negocio.",[
+    "Confirmación de cita y recordatorio el día antes.",
+    "Aviso de trabajo listo, pago recibido y recordatorio de saldo.",
+    "Solo a clientes que aceptaron recibir avisos.",
+    "Bandeja con los mensajes que responden tus clientes.",
+    "Plantillas aprobadas por Meta (WhatsApp Business oficial)."
+   ])}</div>`,
+
+  `<div class="s">${mod("Integraciones","Portal del cliente","ok","Tu cliente consulta su cuenta sin llamarte.",[
+    "Acceso con su correo y clave, que activas desde su ficha.",
+    "Sus facturas con detalle y pagos.",
+    "Sus órdenes de servicio y en qué etapa están.",
+    "Estado de cuenta: total facturado, pagado y saldo."
+   ])}</div>`,
+
+  `<div class="s">${mod("Cumplimiento","Facturación electrónica e-CF","int","Comprobantes fiscales electrónicos de la Ley 32-23.",[
+    "Emisión a través de un proveedor de servicios de facturación electrónica certificado por la DGII.",
+    "Firma digital, envío, código de seguridad y QR en la factura.",
+    "Notas de crédito electrónicas.",
+    "Se activa por empresa cuando completa su certificación ante la DGII."
+   ],"Plazo DGII para micro y pequeñas empresas: 15 de noviembre de 2026")}</div>`,
+
+  `<div class="s">${mod("Sistema","Configuración y puesta en marcha","ok","Todo se ajusta desde la pantalla, sin programadores.",[
+    "Datos de la empresa, logo y secuencias de comprobantes.",
+    "Centro de módulos: enciende o apaga funciones por empresa.",
+    "Asistente de configuración paso a paso para arrancar.",
+    "Credenciales de correo e integraciones guardadas cifradas."
+   ])}</div>`,
+
+  `<div class="s">${head("Resumen","Mapa de módulos","")}
+   <div class="tbl"><table>
+    <thead><tr><th>Módulo</th><th>Grupo</th><th>Estado</th></tr></thead>
+    <tbody>${[
+     ["Panel principal","Inicio","ok"],["Punto de venta","Ventas","ok"],["Facturas y NCF","Ventas","ok"],["Cotizaciones","Ventas","ok"],["Clientes y CxC","Ventas","ok"],
+     ["Órdenes de servicio","Servicios","ok"],["Agenda de citas","Servicios","ok"],["Mis trabajos","Servicios","ok"],
+     ["Inventario","Compras e inv.","ok"],["Compras y CxP","Compras e inv.","ok"],["Sucursales","Compras e inv.","ok"],
+     ["Gastos","Finanzas","ok"],["Contabilidad","Finanzas","ok"],["Reportes DGII","Finanzas","ok"],
+     ["Empleados y nómina","Equipo","ok"],["Usuarios y permisos","Equipo","ok"],
+     ["Asistente IA","Sistema","ok"],["WhatsApp","Integraciones","ok"],["Portal del cliente","Integraciones","ok"],
+     ["e-CF","Cumplimiento","int"],["Pagos con tarjeta en línea","Integraciones","soon"],["Variantes y listas de precios","Inventario","soon"]
+    ].map(([a,b,c])=>`<tr><td>${a}</td><td class="n">${b}</td><td>${pill(c)}</td></tr>`).join("")}</tbody></table></div></div>`
+  ]},
+
+{ id:"industrias", title:"ProStock en tu industria", desc:"Para qué negocios sirve y cómo fluye el trabajo en cada uno.", mins:"10 min",
+  slides:[
+  cover("Industrias y flujos","Se adapta a cómo <span class=\"hl\">trabaja tu negocio.</span>","Un mismo sistema para quien vende productos, quien vende servicios y quien hace las dos cosas."),
+
+  `<div class="s">${head("¿Para quién?","Cuatro tipos de negocio donde ProStock brilla","")}
+   <div class="grid2">
+    ${box("Servicios creativos","Estudios de fotografía, video, diseño, eventos","Órdenes con etapas, agenda por persona, anticipos con NCF, reservas desde la web, avisos por WhatsApp.")}
+    ${box("Tiendas","Retail, colmados grandes, ferreterías, boutiques","Caja rápida sin internet, inventario por almacén, compras y 607 automático.")}
+    ${box("Talleres","Reparación de celulares, equipos, vehículos","Orden de trabajo, presupuesto previo, materiales usados y aviso de equipo listo.")}
+    ${box("Distribuidoras","Importadores y mayoristas","Compras con recepción parcial, cuentas por cobrar por antigüedad, crédito fiscal y contabilidad.")}
+   </div></div>`,
+
+  `<div class="s">${head("Flujo · Tienda","Una venta, de la caja a la DGII","Lo que el cajero hace en segundos y todo lo que el sistema hace detrás.")}
+   ${steps([
+    ["Buscar o escanear","El cajero agrega artículos y elige el cliente, o vende a consumidor final."],
+    ["Cobrar","Efectivo, tarjeta, transferencia o mezcla. También en abonos."],
+    ["Comprobante","Se asigna el NCF que corresponde y se imprime el ticket con QR."],
+    ["Inventario","Las existencias bajan en el almacén de esa caja."],
+    ["Contabilidad","Se registra el asiento de la venta y del ITBIS."],
+    ["Fin de mes","La venta aparece sola en el 607."]
+   ])}</div>`,
+
+  `<div class="s">${head("Flujo · Servicios","Un trabajo por encargo, de la reserva a la entrega","")}
+   ${steps([
+    ["Solicitud","Llega desde tu web o la crea la secretaria. También puede nacer de una cotización."],
+    ["Orden y anticipo","Se crea la orden y se cobra el anticipo con su factura."],
+    ["Agenda","Se asigna fecha, duración y responsable. El sistema avisa si hay choque."],
+    ["Recordatorio","El cliente recibe confirmación y recordatorio por WhatsApp."],
+    ["Producción","El equipo avanza la orden por etapas desde «Mis trabajos»."],
+    ["Entrega y saldo","Aviso de trabajo listo, cobro del saldo y cierre."]
+   ])}</div>`,
+
+  `<div class="s">${head("Flujo · Compras","De la orden al suplidor al reporte 606","")}
+   ${steps([
+    ["Orden de compra","Desde inventario con «Pedir» o creada a mano."],
+    ["Recepción","Se recibe lo que llegó, aunque sea parcial. El stock sube."],
+    ["Deuda","Se registra la cuenta por pagar solo por lo recibido."],
+    ["Pago","Pagos totales o parciales al suplidor, con su asiento."],
+    ["606","La compra, con el NCF del suplidor, entra al reporte del mes."]
+   ])}</div>`,
+
+  `<div class="s">${head("Caso real","Un estudio de fotografía que ya trabaja con ProStock","En producción desde junio de 2026, en su propio servidor dentro del estudio.")}
+   ${L([
+    "<b>Reservas en línea</b>: su página web muestra solo las horas libres de la agenda y la solicitud entra directo al sistema.",
+    "<b>Agenda por fotógrafo</b> con duración por paquete y bloqueo de fechas.",
+    "<b>Anticipos y saldos</b> facturados con NCF desde la orden.",
+    "<b>Carpetas de trabajo automáticas</b> por sesión en el servidor, que se mueven según la etapa.",
+    "<b>Selección de fotos en línea</b>: el cliente elige sus fotos desde un enlace privado con marca de agua.",
+    "<b>Avisos al estudio y al cliente</b> por Telegram y WhatsApp."
+   ])}
+   <div class="dato">Todo esto se construyó sobre los módulos estándar. Cada industria puede tener su capa propia.</div></div>`,
+
+  `<div class="s">${head("Un día con ProStock","Cada rol tiene su pantalla","")}
+   <div class="grid2">
+    ${box("Dueño","Panel y asistente IA","Ve ventas, cobros pendientes y alertas desde el celular, y pregunta lo que quiera saber.")}
+    ${box("Cajero","Punto de venta","Vende, cobra e imprime. No ve costos ni reportes.")}
+    ${box("Técnico o fotógrafo","Mis trabajos","Su agenda y sus órdenes, nada más.")}
+    ${box("Contador","Finanzas","Asientos, estados financieros y 606/607/608 listos, sin pedir papeles.")}
+   </div></div>`,
+
+  `<div class="s">${head("Fin de mes","El cierre que antes tomaba días","")}
+   <div class="grid3">
+    <div class="box"><div class="k">606</div><p>Compras y gastos con NCF del suplidor</p></div>
+    <div class="box"><div class="k">607</div><p>Ventas y notas de crédito con desglose de pago</p></div>
+    <div class="box"><div class="k">608</div><p>Comprobantes anulados</p></div>
+    <div class="box"><div class="k">Balanza</div><p>Comprobación de saldos</p></div>
+    <div class="box"><div class="k">Resultados</div><p>Ingresos, costos y gastos</p></div>
+    <div class="box"><div class="k">Balance</div><p>Activos, pasivos y capital</p></div>
+   </div>
+   <p class="note">Todo exportable a Excel y en formato TXT de la DGII.</p></div>`,
+
+  cover("Tu negocio","¿Cómo se vería en <span class=\"hl\">tu caso?</span>","Cuéntanos cómo vendes, cobras y entregas, y te mostramos el flujo armado con tus productos y tu equipo.")
+  ]},
+
+{ id:"implementacion", title:"Implementación y planes", desc:"Cómo se instala, cómo protege tus datos, planes y lo que viene.", mins:"10 min",
+  slides:[
+  cover("Implementación y planes","De la firma al primer ticket <span class=\"hl\">acompañados.</span>","Cómo se instala ProStock, qué incluye cada plan y qué viene en la hoja de ruta."),
+
+  `<div class="s">${head("Dónde vive","En la nube o en tu propio local","Tú eliges. El sistema y las funciones son los mismos.")}
+   <div class="grid2">
+    ${box("Nube","Accede desde cualquier lugar","Sin equipos que comprar ni mantener. Respaldos y actualizaciones incluidos.")}
+    ${box("Local","Servidor dentro de tu negocio","Para quien quiere los datos en casa. Instalamos el equipo y dejamos copia de respaldo externa.")}
+   </div>
+   ${L(["Se usa desde el navegador en PC, tableta o celular, y se puede instalar como app.","Impresoras térmicas y de carta funcionan desde el navegador."])}</div>`,
+
+  `<div class="s">${head("Tecnología","Construido con herramientas de nivel empresarial","")}
+   <div class="grid2">
+    ${box("Servidor","Java y Spring Boot","La misma base que usan bancos y grandes empresas.")}
+    ${box("Datos","PostgreSQL","Base de datos robusta, con respaldos diarios automáticos.")}
+    ${box("Pantallas","React","Rápida, moderna y adaptada al celular.")}
+    ${box("Calidad","Pruebas automáticas","Cientos de pruebas corren antes de cada actualización.")}
+   </div></div>`,
+
+  `<div class="s">${head("Puesta en marcha","Así arrancamos contigo","Normalmente entre una y dos semanas, según el volumen de datos.")}
+   ${steps([
+    ["Levantamiento","Entendemos cómo vendes, compras, facturas y quién usará el sistema."],
+    ["Configuración fiscal","RNC, secuencias de NCF, ITBIS y datos de la empresa."],
+    ["Carga de datos","Productos, clientes y suplidores desde tus archivos."],
+    ["Usuarios y permisos","Cada persona con su rol y su acceso."],
+    ["Capacitación","Por rol: caja, administración, contabilidad."],
+    ["Arranque acompañado","Estamos contigo los primeros días de operación."]
+   ])}</div>`,
+
+  `<div class="s">${head("Planes","Elige según el tamaño de tu operación","Precios en la propuesta, según usuarios, sucursales y módulos.")}
+   <div class="plan"><div class="eyebrow">Plan</div><h3>Básico</h3><p class="who">Para empezar a facturar en regla.</p>
+    ${L(["Punto de venta y facturas con NCF e ITBIS","Inventario básico","Clientes","1 a 2 usuarios · 1 sucursal"])}</div>
+   <div class="plan feat"><div class="eyebrow">Plan · el más elegido</div><h3>Profesional</h3><p class="who">Para el negocio que vende productos y servicios.</p>
+    ${L(["Todo lo del Básico","Órdenes de servicio, agenda y cotizaciones","Cuentas por cobrar y por pagar","Compras, gastos y contabilidad","Reportes 606, 607 y 608","Permisos por usuario · hasta 5 usuarios"])}</div>
+   <div class="plan"><div class="eyebrow">Plan</div><h3>Empresarial</h3><p class="who">Para operaciones con varias personas o locales.</p>
+    ${L(["Todo lo del Profesional","Usuarios sin límite y varias sucursales","Empleados y nómina","Portal del cliente y asistente IA","Soporte prioritario por WhatsApp"])}</div></div>`,
+
+  `<div class="s">${head("Complementos","Agrega solo lo que necesitas","")}
+   <div class="grid2">
+    ${box("Complemento","Avisos por WhatsApp","Citas, recordatorios, trabajos listos y cobros automáticos.")}
+    ${box("Complemento","Facturación electrónica","Paquete de e-CF mensuales según tu volumen.")}
+    ${box("Complemento","Usuarios y sucursales extra","Crece sin cambiar de plan.")}
+    ${box("Complemento","Asistente IA","Disponible también para el plan Profesional.")}
+   </div>
+   <div class="eyebrow">Servicios profesionales</div>
+   ${chips(["Migración desde Excel u otro sistema","Capacitación presencial","Integraciones a medida","Módulos para tu industria"],true)}</div>`,
+
+  `<div class="s">${head("Hoja de ruta","Lo que viene","ProStock se actualiza de forma continua. Estas mejoras ya están planificadas.")}
+   <div class="tbl"><table>
+    <thead><tr><th>Mejora</th><th>Para qué sirve</th><th>Estado</th></tr></thead>
+    <tbody>
+     <tr><td>Facturación electrónica e-CF</td><td>Cumplir la Ley 32-23</td><td>${pill("int")}</td></tr>
+     <tr><td>Pagos con tarjeta y link de pago</td><td>Cobrar en línea desde la factura o WhatsApp</td><td>${pill("soon")}</td></tr>
+     <tr><td>Variantes de producto</td><td>Talla, color o modelo en un mismo artículo</td><td>${pill("soon")}</td></tr>
+     <tr><td>Listas de precios</td><td>Precios por cliente o grupo</td><td>${pill("soon")}</td></tr>
+     <tr><td>Lotes y vencimientos</td><td>Control por lote, serie y fecha</td><td>${pill("soon")}</td></tr>
+     <tr><td>Facturación recurrente</td><td>Mensualidades y suscripciones</td><td>${pill("soon")}</td></tr>
+     <tr><td>Pronóstico de demanda</td><td>La IA sugiere cuándo y cuánto pedir</td><td>${pill("soon")}</td></tr>
+    </tbody></table></div></div>`,
+
+  `<div class="s">${head("Soporte","No te dejamos solo","")}
+   ${L([
+    "<b>Soporte en español</b>, por personas que conocen la operación dominicana.",
+    "<b>Actualizaciones incluidas</b>: las mejoras llegan sin costo extra dentro de tu plan.",
+    "<b>Respaldos diarios</b> y restauración si algo sale mal.",
+    "<b>Cambios fiscales</b>: cuando la DGII cambia una regla, el sistema se ajusta."
+   ])}</div>`,
+
+  cover("ProStock · ConectorIA","Empecemos con <span class=\"hl\">una demostración.</span>","Te mostramos el sistema con tus productos y armamos la propuesta con el plan y los módulos que de verdad vas a usar.",
+   `<div class="brand"><div class="logo" aria-hidden="true">P</div><div><b>ProStock</b><br><span>un producto de ConectorIA</span></div></div>`)
+  ]}
+];
+
+/* ---------- Menú ---------- */
+const list = document.getElementById("deckList");
+list.innerHTML = DECKS.map((d,i)=>`<button class="deck-card" data-id="${d.id}">
+  <span class="n">0${i+1}</span><h2>${d.title}</h2><p>${d.desc}</p>
+  <span class="meta">${d.slides.length} LÁMINAS · ${d.mins.toUpperCase()}</span></button>`).join("");
+list.addEventListener("click",e=>{const b=e.target.closest(".deck-card"); if(b) location.hash=b.dataset.id;});
+
+/* ---------- Visor ---------- */
+const hub=document.getElementById("hub"), deck=document.getElementById("deck"), track=document.getElementById("track");
+const count=document.getElementById("count"), prog=document.getElementById("prog");
+const btnPrev=document.getElementById("btnPrev"), btnNext=document.getElementById("btnNext");
+let cur=null, idx=0;
+
+function wrap(html){ return html.trim().startsWith('<div class="s') ? html : `<div class="s">${html}</div>`; }
+function open(id){
+  const d=DECKS.find(x=>x.id===id);
+  if(!d){ cur=null; deck.hidden=true; hub.hidden=false; document.title="Presentaciones ProStock"; return; }
+  cur=d; idx=0;
+  document.getElementById("deckTitle").textContent=d.title;
+  track.innerHTML=d.slides.map((s,i)=>`<section class="slide" aria-label="Lámina ${i+1} de ${d.slides.length}">${wrap(s)}</section>`).join("");
+  hub.hidden=true; deck.hidden=false; track.scrollLeft=0; update(); track.focus({preventScroll:true});
+}
+function update(){
+  if(!cur) return;
+  const n=cur.slides.length;
+  idx=Math.max(0,Math.min(n-1,Math.round(track.scrollLeft/track.clientWidth)));
+  count.textContent=`${idx+1} / ${n}`;
+  prog.style.width=`${((idx+1)/n)*100}%`;
+  btnPrev.disabled=idx===0; btnNext.disabled=idx===n-1;
+}
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function go(i){ track.scrollTo({left:i*track.clientWidth,behavior:reduce?"auto":"smooth"}); }
+track.addEventListener("scroll",()=>requestAnimationFrame(update),{passive:true});
+btnPrev.onclick=()=>go(idx-1); btnNext.onclick=()=>go(idx+1);
+document.getElementById("btnHome").onclick=()=>{ history.replaceState(null,"",location.pathname+location.search); open(null); };
+document.addEventListener("keydown",e=>{
+  if(!cur) return;
+  if(e.key==="ArrowRight"||e.key==="PageDown"){e.preventDefault();go(idx+1);}
+  else if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();go(idx-1);}
+  else if(e.key==="Escape"){document.getElementById("btnHome").click();}
+});
+addEventListener("resize",()=>{ if(cur) track.scrollLeft=idx*track.clientWidth; });
+addEventListener("hashchange",()=>open(location.hash.slice(1)));
+open(location.hash.slice(1));
+</script>
+
+</body>
+</html>
