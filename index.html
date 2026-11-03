@@ -38,6 +38,7 @@
 
 *{box-sizing:border-box}
 html,body{height:100%}
+html{font-size:clamp(16px,calc(8px + .55vw),20px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
 img{max-width:100%;display:block}
@@ -62,7 +63,7 @@ button{font:inherit;color:inherit}
 .brand small{color:var(--night-muted);font-size:.8rem}
 .hero-grid{display:grid;gap:28px;align-items:end}
 @media(min-width:820px){.hero-grid{grid-template-columns:1.25fr .75fr}}
-.hero h1{font-size:clamp(2.6rem,11vw,5.4rem);font-stretch:125%;font-weight:900;letter-spacing:-.025em;line-height:.95}
+.hero h1{font-size:clamp(2.3rem,10vw,5rem);overflow-wrap:break-word;font-stretch:125%;font-weight:900;letter-spacing:-.025em;line-height:.95}
 .hero h1 em{font-style:normal;color:var(--mint)}
 .hero .lead{color:var(--night-muted);font-size:1.08rem;max-width:52ch;margin-top:16px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--night-line);border:1px solid var(--night-line);border-radius:14px;overflow:hidden;margin-top:22px}
@@ -114,7 +115,7 @@ button{font:inherit;color:inherit}
 .slide.dark .eyebrow{color:var(--mint)}
 .slide.dark .lead{color:var(--night-muted)}
 .slide.dark .hl{color:var(--mint)}
-.s{max-width:1040px;margin:0 auto;display:grid;gap:18px;align-content:start;min-height:100%}
+.s{max-width:min(80rem,100%);margin:0 auto;display:grid;gap:18px;align-content:start;min-height:100%}
 .s.center{align-content:center}
 .foot{position:relative;z-index:3;display:flex;align-items:center;gap:10px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--paper)}
 #deck.on-dark .foot{background:var(--night);border-color:var(--night-line)}
@@ -131,11 +132,11 @@ button{font:inherit;color:inherit}
 .slide.active .s > *:nth-child(n+5){animation-delay:.28s}
 
 /* ================= PIEZAS ================= */
-.h1{font-size:clamp(2.5rem,11vw,5.2rem);font-stretch:125%;font-weight:900;letter-spacing:-.03em;line-height:.95}
-.h2{font-size:clamp(1.75rem,7.4vw,3rem);font-stretch:112%}
+.h1{font-size:clamp(2.1rem,8.6vw,4.3rem);font-stretch:125%;font-weight:900;letter-spacing:-.03em;line-height:.98;overflow-wrap:break-word;hyphens:manual}
+.h2{font-size:clamp(1.65rem,6.6vw,2.7rem);font-stretch:112%;overflow-wrap:break-word}
 .lead{font-size:1.05rem;color:var(--muted);max-width:58ch}
 .split{display:grid;gap:20px;align-items:center}
-@media(min-width:860px){.split{grid-template-columns:.9fr 1.1fr;gap:40px}.split.rev > :first-child{order:2}}
+@media(min-width:860px){.split{grid-template-columns:.8fr 1.2fr;gap:clamp(32px,4vw,64px)}.split.rev{grid-template-columns:1.2fr .8fr}.split.rev > :first-child{order:2}}
 @media(max-width:859px){.mobfirst > .txt{display:contents}.mobfirst > .shot,.mobfirst > .duo{order:1}.mobfirst ul.ck,.mobfirst .dato{order:2}}
 .txt{display:grid;gap:16px;min-width:0;align-content:start}
 .modtag{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -196,8 +197,12 @@ ul.ck b{font-weight:700}
 .slide.dark .box{background:var(--night-2);border-color:var(--night-line)}
 .slide.dark .box p{color:var(--night-muted)}
 .slide.dark .box .bi{background:rgba(70,214,160,.14);color:var(--mint)}
-.big{font-family:var(--f-display);font-stretch:125%;font-weight:900;font-size:clamp(2.2rem,9vw,3.4rem);line-height:.95;color:var(--accent);font-variant-numeric:tabular-nums}
+.big{font-family:var(--f-display);font-stretch:112%;font-weight:900;font-size:clamp(1.9rem,7vw,2.6rem);overflow-wrap:anywhere;line-height:.95;color:var(--accent);font-variant-numeric:tabular-nums}
 .slide.dark .big{color:var(--gold)}
+.statlist{display:grid;gap:10px}
+.statlist .st{display:grid;grid-template-columns:minmax(76px,auto) 1fr;gap:16px;align-items:center;background:var(--night-2);border:1px solid var(--night-line);border-radius:14px;padding:12px 16px}
+.statlist .st b{font-family:var(--f-display);font-stretch:112%;font-weight:900;font-size:clamp(1.7rem,6vw,2.3rem);line-height:1;color:var(--gold)}
+.statlist .st span{color:var(--night-muted);font-size:.95rem;line-height:1.35}
 .pain{display:grid;gap:10px}
 .pain .row{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px 15px}
 .pain .x{width:34px;height:34px;border-radius:50%;background:var(--amber-soft);color:var(--amber);display:grid;place-items:center}
@@ -283,7 +288,8 @@ td.n{color:var(--muted)}
   .tbl td.col-pro{background:var(--accent-soft);margin:2px -6px 0;padding:4px 6px;border-radius:8px}
   .ticket{font-size:.68rem;padding:16px 13px 22px}
   .printer{width:min(270px,78vw)}
-  .h1{font-size:clamp(2.3rem,12vw,3.2rem)}
+  .h1{font-size:clamp(2rem,9.4vw,2.9rem);font-stretch:112%}
+  .h2{font-size:clamp(1.55rem,7vw,2rem)}
   .lead{font-size:1rem}
   .slide{padding-block:10px 26px}
   .s{gap:16px}
@@ -478,10 +484,10 @@ const DECKS = [
   C(`<div class="s center"><div class="split">
      <div class="txt"><div class="eyebrow">Sin internet no se para</div><h2 class="h2">Se fue la luz. <span class="hl">La caja sigue vendiendo.</span></h2>
       <p class="lead">El punto de venta guarda las ventas en el equipo y las sincroniza solas cuando vuelve la conexión, con su fecha y hora reales.</p>
-      <div class="grid3">
-       <div class="box"><div class="big">0</div><p>ventas perdidas por un apagón</p></div>
-       <div class="box"><div class="big">Auto</div><p>sincroniza al volver la conexión</p></div>
-       <div class="box"><div class="big">1</div><p>app para PC, tableta y celular</p></div>
+      <div class="statlist">
+       <div class="st"><b>0</b><span>ventas perdidas por un apagón o una caída del internet</span></div>
+       <div class="st"><b>Auto</b><span>sincroniza sola al volver la conexión</span></div>
+       <div class="st"><b>1</b><span>misma app para PC, tableta y celular</span></div>
       </div></div>
      ${shot("desk-pos","Punto de venta")}</div></div>`),
 
